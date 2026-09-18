@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPulse AI - Diagnostik Kendaraan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- CANVAS & BACKGROUND CONTAINER -->
+    <canvas id="bgCanvas"></canvas>
+    <div id="customBgImage" class="custom-bg"></div>
+
+    <!-- MODAL LOGIN -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="brand-center">
+                <span class="icon">🚗</span>
+                <h2>AutoPulse AI</h2>
+            </div>
+            <p>Masukkan nama untuk melanjutkan</p>
+            <form id="loginForm">
+                <input type="text" id="usernameInput" placeholder="Nama Anda..." required>
+                <button type="submit" class="btn btn-primary btn-block">Masuk Aplikasi</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- UTAMA -->
+    <div class="container">
+        
+        <!-- HEADER / NAVBAR -->
+        <header class="navbar">
+            <div class="brand">
+                <span class="icon">🚗</span>
+                <div>
+                    <h1>AutoPulse AI</h1>
+                    <span class="user-greeting">Halo, <strong id="userDisplayName">User</strong></span>
+                </div>
+            </div>
+            <div class="actions">
+                <button id="openBgSettingsBtn" class="btn btn-secondary">
+                    <span>🎨</span> Animasi
+                </button>
+                <select id="themeSelect" class="custom-select">
+                    <option value="cyber">⚡ Neon</option>
+                    <option value="dark">🌙 Gelap</option>
+                    <option value="light">☀️ Terang</option>
+                </select>
+                <button id="logoutBtn" class="btn btn-danger">Keluar</button>
+            </div>
+        </header>
+
+        <!-- PANEL PENGATURAN ANIMASI -->
+        <div id="bgSettingsPanel" class="card settings-panel hidden">
+            <div class="aside-header">
+                <h2>Pengaturan Animasi Latar Belakang</h2>
+                <button id="closeBgSettingsBtn" class="text-link">Tutup</button>
+            </div>
+            <div class="settings-grid">
+                <div class="form-group">
+                    <label>Tipe Animasi Preset</label>
+                    <select id="animTypeSelect" class="custom-select">
+                        <option value="grid">Grid Glowing Interactive</option>
+                        <option value="particles">Partikel Floating</option>
+                        <option value="stars">Starfield Space</option>
+                        <option value="custom">Unggah Gambar / GIF Sendiri</option>
+                    </select>
+                </div>
+
+                <div id="presetControls" class="settings-group">
+                    <div class="form-group">
+                        <label>Kecepatan Animasi: <span id="speedVal">1</span></label>
+                        <input type="range" id="animSpeed" min="0.1" max="3" step="0.1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Kepadatan / Objek: <span id="countVal">50</span></label>
+                        <input type="range" id="animCount" min="10" max="150" step="5" value="50">
+                    </div>
+                </div>
+
+                <div id="customBgControls" class="form-group hidden">
+                    <label>Unggah Gambar / GIF dari Perangkat</label>
+                    <div class="upload-box">
+                        <input type="file" id="bgImageInput" accept="image/*">
+                        <span id="bgFileLabel">🖼️ Pilih file GIF/Gambar...</span>
+                    </div>
+                    <button type="button" id="removeCustomBg" class="btn btn-danger btn-block" style="margin-top: 10px;">Hapus Gambar Custom</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KONTEN UTAMA -->
+        <div class="main-grid">
+            
+            <!-- FORM ANALISIS -->
+            <main class="card">
+                <h2>Form Analisis Kerusakan</h2>
+                
+                <form id="diagForm">
+                    <div class="form-group">
+                        <label>Foto Mobil (Opsional)</label>
+                        <div class="upload-box">
+                            <input type="file" id="carImageInput" accept="image/*">
+                            <span id="fileLabel">📷 Pilih foto mobil...</span>
+                        </div>
+                        <div id="imagePreviewContainer" class="hidden">
+                            <img id="carImagePreview" src="" alt="Preview">
+                            <button type="button" id="removeImage" class="btn-text-danger">Hapus Foto</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="carModel">Merk / Model Mobil</label>
+                        <input type="text" id="carModel" placeholder="Contoh: Honda Jazz 2017" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="symptoms">Gejala Kerusakan</label>
+                        <textarea id="symptoms" rows="3" placeholder="Contoh: Suara mesin kasar saat AC menyala" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Analisis Sekarang</button>
+                </form>
+
+                <!-- LOADING -->
+                <div id="loading" class="hidden">
+                    <div class="spinner"></div>
+                    <p>AI sedang menganalisis gejala kendaraan...</p>
+                </div>
+
+                <!-- HASIL -->
+                <div id="result" class="result-box hidden">
+                    <div class="result-header">
+                        <h3>Hasil Analisis</h3>
+                        <button id="saveResultBtn" class="btn btn-success">💾 Simpan Riwayat</button>
+                    </div>
+                    <div id="aiOutput" class="result-content"></div>
+                </div>
+            </main>
+
+            <!-- RIWAYAT TERSIMPAN -->
+            <aside class="card">
+                <div class="aside-header">
+                    <h2>Riwayat Tersimpan</h2>
+                    <button id="clearHistoryBtn" class="text-link">Hapus Semua</button>
+                </div>
+                <div id="historyList" class="history-list">
+                    <p class="empty-state">Belum ada riwayat tersimpan.</p>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
