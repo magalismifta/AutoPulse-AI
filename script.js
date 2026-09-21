@@ -1,4 +1,7 @@
-const GEMINI_API_KEY = "AQ.Ab8RN6KiM609GNe0OcXVb0V-i29j0LpmZ4UXXNXTVtTOuVVwMQ";
+// API key TIDAK lagi ditaruh di sini. Semua request AI dikirim ke
+// proxy (Cloudflare Worker) yang menyimpan key secara aman di server.
+// Ganti URL di bawah dengan URL Worker milikmu setelah deploy.
+const PROXY_URL = "https://magalismifta.kkontyaht.workers.dev";
 
 // Elements
 const loginModal = document.getElementById('loginModal');
@@ -292,19 +295,19 @@ form.addEventListener('submit', async (e) => {
     loading.classList.remove('hidden');
     result.classList.add('hidden');
 
-    const promptText = `Kamu adalah mekanik berpengalaman. Analisis singkat:\nMobil: ${carModel}\nGejala: ${symptoms}\n\nBerikan:\n1. Kemungkinan Kerusakan\n2. Tingkat Bahaya\n3. Saran Perbaikan`;
-
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        // Prompt sekarang dibangun di server (Worker), di sini kita
+        // cukup kirim data mentahnya saja.
+        const response = await fetch(PROXY_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+            body: JSON.stringify({ carModel, symptoms })
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error ? data.error.message : "Gagal memanggil AI");
+        if (!response.ok) throw new Error(data.error || "Gagal memanggil AI");
 
-        lastAnalysisResult = data.candidates[0].content.parts[0].text;
+        lastAnalysisResult = data.result;
         aiOutput.innerText = lastAnalysisResult;
         result.classList.remove('hidden');
     } catch (err) {
