@@ -1,6 +1,3 @@
-// API key TIDAK lagi ditaruh di sini. Semua request AI dikirim ke
-// proxy (Cloudflare Worker) yang menyimpan key secara aman di server.
-// Ganti URL di bawah dengan URL Worker milikmu setelah deploy.
 const PROXY_URL = "https://magalismifta.kkontyaht.workers.dev";
 
 // Elements
